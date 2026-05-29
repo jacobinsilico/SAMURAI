@@ -25,7 +25,11 @@ package user_pkg;
 
   localparam bit [31:0] UserRomBaseAddr    = croc_pkg::UserBaseAddr + 32'h0000_0000;
   localparam bit [31:0] UserDesignBaseAddr = croc_pkg::UserBaseAddr + 32'h0000_1000;
-
+  
+  // I added these parameters so we can parametrize systolic array in one place
+  localparam int unsigned UserArrayRows = 4;
+  localparam int unsigned UserArrayCols = 4;
+  localparam int unsigned UserKDim      = 4;
   /// Enum with user-domain demultiplexer subordinate indices.
   typedef enum int {
     UserError  = 0,

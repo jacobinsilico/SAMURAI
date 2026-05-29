@@ -128,9 +128,9 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
 
     .DATA_WIDTH   ( 16 ),
     .ACC_WIDTH    ( 32 ),
-    .ARRAY_ROWS   ( 2  ),
-    .ARRAY_COLS   ( 2  ),
-    .K_DIM        ( 2  )
+    .ARRAY_ROWS   ( UserArrayRows ),
+    .ARRAY_COLS   ( UserArrayCols  ),
+    .K_DIM        ( UserKDim  )
   ) i_user_top (
     .clk_i,
     .rst_ni,
