@@ -20,26 +20,35 @@ package user_pkg;
   // User Subordinates //
   ///////////////////////
 
-  // The base address of the user domain can be retrived from `croc_pkg::UserBaseAddr`
-  // Recommended: place subordinates at 4KB boundaries (32'hXXXX_X000)
+  // The base address of the user domain can be retrieved from `croc_pkg::UserBaseAddr`.
+  // Recommended: place subordinates at 4KB boundaries, i.e. 32'hXXXX_X000.
 
-  /// Enum with user domain demultiplexer subordinate idxs
-  typedef enum bit [4:0]  {
+  localparam bit [31:0] UserRomBaseAddr    = croc_pkg::UserBaseAddr + 32'h0000_0000;
+  localparam bit [31:0] UserDesignBaseAddr = croc_pkg::UserBaseAddr + 32'h0000_1000;
+
+  /// Enum with user-domain demultiplexer subordinate indices.
+  typedef enum int {
     UserError  = 0,
-    UserDesign = 1
+    UserRom    = 1,
+    UserDesign = 2
   } user_demux_outputs_e;
 
-  /// Address rules given to user domain demultiplexer (see croc_pkg.sv for examples)
-  localparam croc_pkg::addr_map_rule_t [0:0] UserAddrMap = '{
+  /// Address rules given to the user-domain demultiplexer.
+  localparam croc_pkg::addr_map_rule_t [1:0] user_addr_map = '{
+    '{
+      idx:        UserRom,
+      start_addr: UserRomBaseAddr,
+      end_addr:   UserRomBaseAddr + 32'h0000_1000
+    },
     '{
       idx:        UserDesign,
-      start_addr: croc_pkg::UserBaseAddr,
-      end_addr:   croc_pkg::UserBaseAddr + 32'h1000_0000
+      start_addr: UserDesignBaseAddr,
+      end_addr:   UserDesignBaseAddr + 32'h0000_1000
     }
   };
-  // All addresses outside the defined address rules go to the error subordinate
 
-  // +1 for additional OBI error
-  localparam int unsigned NumDemuxSbr = $size(UserAddrMap) + 1;
+  // All addresses outside the defined address rules go to the error subordinate.
+  // +1 for additional OBI error subordinate.
+  localparam int unsigned NumDemuxSbr = $size(user_addr_map) + 1;
 
 endpackage
