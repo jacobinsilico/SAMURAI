@@ -48,6 +48,16 @@ sources:
       - rtl/obi_timer/obi_timer.sv
       # Level 2
       - rtl/croc_domain.sv
+
+      # User-domain systolic-array accelerator
+      - rtl/user_domain/user_pe.sv
+      - rtl/user_domain/user_systolic_array.sv
+      - rtl/user_domain/user_buffers.sv
+      - rtl/user_domain/user_fsm.sv
+      - rtl/user_domain/user_regs.sv
+      - rtl/user_domain/user_rom.sv
+      - rtl/user_domain/user_top.sv
+
       - rtl/user_domain.sv
       # add your design files with modules here
       # Level 3
