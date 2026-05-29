@@ -136,32 +136,48 @@ module user_regs #(
   assign cfg0_access   = (word_addr == REG_CFG0_WORD);
   assign cfg1_access   = (word_addr == REG_CFG1_WORD);
 
+  localparam logic [WORD_ADDR_WIDTH-1:0] A_BASE_WORD_L = WORD_ADDR_WIDTH'(A_BASE_WORD);
+  localparam logic [WORD_ADDR_WIDTH-1:0] B_BASE_WORD_L = WORD_ADDR_WIDTH'(B_BASE_WORD);
+  localparam logic [WORD_ADDR_WIDTH-1:0] C_BASE_WORD_L = WORD_ADDR_WIDTH'(C_BASE_WORD);
+
+  localparam logic [WORD_ADDR_WIDTH-1:0] A_END_WORD_L = WORD_ADDR_WIDTH'(A_BASE_WORD + A_ELEMS);
+  localparam logic [WORD_ADDR_WIDTH-1:0] B_END_WORD_L = WORD_ADDR_WIDTH'(B_BASE_WORD + B_ELEMS);
+  localparam logic [WORD_ADDR_WIDTH-1:0] C_END_WORD_L = WORD_ADDR_WIDTH'(C_BASE_WORD + C_ELEMS);
+
+  logic [WORD_ADDR_WIDTH-1:0] a_idx;
+  logic [WORD_ADDR_WIDTH-1:0] b_idx;
+  logic [WORD_ADDR_WIDTH-1:0] c_idx;
+
   assign a_access =
-      (word_addr >= A_BASE_WORD[WORD_ADDR_WIDTH-1:0]) &&
-      (word_addr <  (A_BASE_WORD + A_ELEMS)[WORD_ADDR_WIDTH-1:0]);
+      (word_addr >= A_BASE_WORD_L) &&
+      (word_addr <  A_END_WORD_L);
 
   assign b_access =
-      (word_addr >= B_BASE_WORD[WORD_ADDR_WIDTH-1:0]) &&
-      (word_addr <  (B_BASE_WORD + B_ELEMS)[WORD_ADDR_WIDTH-1:0]);
+      (word_addr >= B_BASE_WORD_L) &&
+      (word_addr <  B_END_WORD_L);
 
   assign c_access =
-      (word_addr >= C_BASE_WORD[WORD_ADDR_WIDTH-1:0]) &&
-      (word_addr <  (C_BASE_WORD + C_ELEMS)[WORD_ADDR_WIDTH-1:0]);
+      (word_addr >= C_BASE_WORD_L) &&
+      (word_addr <  C_END_WORD_L);
+
+  assign a_idx = word_addr - A_BASE_WORD_L;
+  assign b_idx = word_addr - B_BASE_WORD_L;
+  assign c_idx = word_addr - C_BASE_WORD_L;
 
   // ---------------------------------------------------------------------------
   // Buffer-side access
   // ---------------------------------------------------------------------------
 
   assign cpu_a_we_o    = obi_req_i.req && obi_req_i.a.we && a_access;
-  assign cpu_a_addr_o  = word_addr - A_BASE_WORD[WORD_ADDR_WIDTH-1:0];
+  assign cpu_a_addr_o  = a_idx[A_ADDR_WIDTH-1:0];
   assign cpu_a_wdata_o = obi_req_i.a.wdata[DATA_WIDTH-1:0];
 
   assign cpu_b_we_o    = obi_req_i.req && obi_req_i.a.we && b_access;
-  assign cpu_b_addr_o  = word_addr - B_BASE_WORD[WORD_ADDR_WIDTH-1:0];
+  assign cpu_b_addr_o  = b_idx[B_ADDR_WIDTH-1:0];
   assign cpu_b_wdata_o = obi_req_i.a.wdata[DATA_WIDTH-1:0];
 
   assign cpu_c_we_o    = obi_req_i.req && obi_req_i.a.we && c_access;
-  assign cpu_c_addr_o  = word_addr - C_BASE_WORD[WORD_ADDR_WIDTH-1:0];
+  assign cpu_c_addr_o  = c_idx[C_ADDR_WIDTH-1:0];
   assign cpu_c_wdata_o = obi_req_i.a.wdata[ACC_WIDTH-1:0];
 
   // Start pulse. The FSM decides whether to accept it depending on its state.
